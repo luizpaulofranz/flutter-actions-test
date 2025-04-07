@@ -5,6 +5,7 @@ on:
     types: [ opened, synchronize, reopened ]
       - main
 # we have some extra configurations on github repository settings in order to block merge when the action fails
+# see settings / rules
 
 jobs:
   test:
