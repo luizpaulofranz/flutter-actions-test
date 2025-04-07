@@ -8,6 +8,7 @@ on:
 
 jobs:
   test:
+    name: Integration Tests
     runs-on: macos-latest
 
     steps:
