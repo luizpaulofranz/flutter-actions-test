@@ -49,25 +49,25 @@ void main() {
         },
       );
 
-      testWidgets(
-        'FAILING TEST - to see the output',
-        (tester) async {
-          app.main();
-          await tester.pumpAndSettle();
-          await Future.delayed(const Duration(seconds: 2));
-          await tester.enterText(find.byType(TextFormField).at(0), 'wronguser');
-          await Future.delayed(const Duration(seconds: 2));
-          await tester.enterText(
-              find.byType(TextFormField).at(1), 'invalidpass');
-          await Future.delayed(const Duration(seconds: 2));
-          await tester.tap(find.byType(ElevatedButton));
-          await Future.delayed(const Duration(seconds: 2));
-          await tester.pumpAndSettle();
+      // testWidgets(
+      //   'FAILING TEST - to see the output',
+      //   (tester) async {
+      //     app.main();
+      //     await tester.pumpAndSettle();
+      //     await Future.delayed(const Duration(seconds: 2));
+      //     await tester.enterText(find.byType(TextFormField).at(0), 'wronguser');
+      //     await Future.delayed(const Duration(seconds: 2));
+      //     await tester.enterText(
+      //         find.byType(TextFormField).at(1), 'invalidpass');
+      //     await Future.delayed(const Duration(seconds: 2));
+      //     await tester.tap(find.byType(ElevatedButton));
+      //     await Future.delayed(const Duration(seconds: 2));
+      //     await tester.pumpAndSettle();
 
-          await Future.delayed(const Duration(seconds: 2));
-          expect(find.byType(HomeScreen), findsOneWidget);
-        },
-      );
+      //     await Future.delayed(const Duration(seconds: 2));
+      //     expect(find.byType(HomeScreen), findsOneWidget);
+      //   },
+      // );
     },
   );
 }
