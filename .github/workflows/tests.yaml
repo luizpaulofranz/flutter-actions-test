@@ -3,7 +3,7 @@ name: test-my-app
 on:
   pull_request:
     types: [ opened, synchronize, reopened ]
-      - main
+    branches: [ main ]
 # we have some extra configurations on github repository settings in order to block merge when the action fails
 # see settings / rules
 
