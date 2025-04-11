@@ -49,16 +49,14 @@ jobs:
         with:
           api-level: 33
           target: google_apis
-          arch: x86_64
+          arch: arm64-v8a
           profile: pixel_4
           force-avd-creation: true
           emulator-options: '-no-window -no-audio -no-snapshot'
           disable-animations: true
-          script: ./gradlew connectedCheck
-          # script: |
-          #   $ANDROID_HOME/platform-tools/adb start-server
-          #   $ANDROID_HOME/platform-tools/adb devices
-          #   flutter test integration_test/app_test.dart
+          script: |
+            ./gradlew connectedCheck
+            flutter test integration_test/app_test.dart
 
       - name: Run integration tests
         run: flutter test integration_test/app_test.dart
