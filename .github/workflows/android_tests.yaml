@@ -9,7 +9,7 @@ on:
 
 jobs:
   android_test:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - name: Checkout code
@@ -54,13 +54,14 @@ jobs:
           force-avd-creation: true
           emulator-options: '-no-window -no-audio -no-snapshot'
           disable-animations: true
-          script: |
-            $ANDROID_HOME/platform-tools/adb start-server
-            $ANDROID_HOME/platform-tools/adb devices
-            flutter test integration_test/app_test.dart
+          script: ./gradlew connectedCheck
+          # script: |
+          #   $ANDROID_HOME/platform-tools/adb start-server
+          #   $ANDROID_HOME/platform-tools/adb devices
+          #   flutter test integration_test/app_test.dart
 
-      # - name: Run integration tests
-      #   run: flutter test integration_test/app_test.dart
+      - name: Run integration tests
+        run: flutter test integration_test/app_test.dart
 
       # Optional: Upload test results if needed
       # - name: Upload test report
