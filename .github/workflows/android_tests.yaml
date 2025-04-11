@@ -54,7 +54,10 @@ jobs:
           force-avd-creation: true
           emulator-options: '-no-window -no-audio -no-snapshot'
           disable-animations: true
-          script: flutter test integration_test/app_test.dart
+          script: |
+            $ANDROID_HOME/platform-tools/adb start-server
+            $ANDROID_HOME/platform-tools/adb devices
+            flutter test integration_test/app_test.dart
 
       # - name: Run integration tests
       #   run: flutter test integration_test/app_test.dart
