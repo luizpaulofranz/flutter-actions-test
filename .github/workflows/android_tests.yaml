@@ -1,0 +1,62 @@
+name: Android Integration Tests
+
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    branches: [ main ]
+# we have some extra configurations on github repository settings in order to block merge when the action fails
+# see settings / rules
+
+jobs:
+  android_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true  # Caches Flutter SDK automatically
+          
+
+      - name: Restore pub cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Accept Android licenses
+        run: yes | flutter doctor --android-licenses
+
+      - name: Create and start emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          target: google_apis
+          arch: x86_64
+          profile: pixel_3a
+          script: flutter test integration_test
+
+      - name: Run integration tests
+        run: flutter test integration_test/app_test.dart
+
+      # Optional: Upload test results if needed
+      # - name: Upload test report
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: integration-test-report
+      #     path: build/integration_test/
+

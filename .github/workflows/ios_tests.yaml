@@ -1,4 +1,4 @@
-name: test-my-app
+name: iOS Integration Tests
 
 on:
   pull_request:
@@ -8,12 +8,12 @@ on:
 # see settings / rules
 
 jobs:
-  test:
-    name: Integration Tests
+  ios_tests:
     runs-on: macos-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - uses: futureware-tech/simulator-action@v3
         with:
@@ -22,6 +22,13 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+
+      - name: Restore pub cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
 
       - run: flutter pub get
       - run: flutter test integration_test/app_test.dart
