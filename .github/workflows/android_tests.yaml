@@ -41,25 +41,23 @@ jobs:
       - name: Accept Android licenses
         run: yes | flutter doctor --android-licenses
 
-      - name: Start Android Emulator
+      - name: Kill all adb servers
+        run: adb kill-server || true
+
+      - name: Run Android integration tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 33
-          target: google_apis
+          target: google_apis_playstore
           arch: x86_64
           profile: pixel_4
           force-avd-creation: true
           emulator-options: '-no-window -no-audio -no-snapshot'
           disable-animations: true
-          script: |
-            adb wait-for-device
-            adb shell settings put global window_animation_scale 0
-            adb shell settings put global transition_animation_scale 0
-            adb shell settings put global animator_duration_scale 0
-            adb shell getprop sys.boot_completed | grep 1
+          script: flutter test integration_test/app_test.dart
 
-      - name: Run integration tests
-        run: flutter test integration_test/app_test.dart
+      # - name: Run integration tests
+      #   run: flutter test integration_test/app_test.dart
 
       # Optional: Upload test results if needed
       # - name: Upload test report
