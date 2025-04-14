@@ -19,6 +19,12 @@ jobs:
         with:
           channel: 'stable'
 
+      - name: Set up ChromeDriver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-chromedriver
+          echo "$(which chromedriver)" >> $GITHUB_PATH
+
       - name: Enable Flutter web
         run: flutter config --enable-web
 
@@ -32,6 +38,20 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Run integration tests on Chrome
+
+      - name: Run integration tests
+        run: |
+          # Start ChromeDriver in the background
+          chromedriver --port=4444 &
+          # Wait for ChromeDriver to initialize
+          sleep 5
+          # Run tests
+          flutter drive \
+            --driver=test_driver/driver.dart \
+            --target=integration_test/app_test.dart \
+            -d web-server \
+            --release
+
+      # - name: Run integration tests on Chrome
         # run: flutter test -d chrome --platform chrome integration_test/app_test.dart
-        run: flutter drive --driver=test_driver/driver.dart --target=integration_test/app_test.dart -d web-server
+        # run: flutter drive --driver=test_driver/driver.dart --target=integration_test/app_test.dart -d web-server
