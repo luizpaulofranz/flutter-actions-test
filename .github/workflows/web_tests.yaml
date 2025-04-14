@@ -33,4 +33,4 @@ jobs:
         run: flutter pub get
 
       - name: Run integration tests on Chrome
-        run: flutter drive --target=integration_test/app_test.dart -d chrome
+        run: flutter test --platform chrome integration_test/app_test.dart
