@@ -18,11 +18,9 @@ jobs:
           channel: 'stable'
 
       - name: Install Chrome and ChromeDriver
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-chromedriver
-          sudo ln -s /usr/bin/chromium-browser /usr/bin/google-chrome
-          echo "CHROME_EXECUTABLE=/usr/bin/chromium-browser" >> $GITHUB_ENV
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: 'latest'
 
       - name: Enable Flutter web
         run: flutter config --enable-web
@@ -43,7 +41,7 @@ jobs:
           chromedriver --port=4444 &
           # Wait for ChromeDriver to initialize
           sleep 5
-          # Run tests with verbose logging
+          # Run tests
           flutter drive \
             --driver=test_driver/driver.dart \
             --target=integration_test/app_test.dart \
