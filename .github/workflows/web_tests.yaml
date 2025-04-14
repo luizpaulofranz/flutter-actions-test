@@ -1,0 +1,36 @@
+name: Web Integration Tests
+
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    branches: [ main ]
+# we have some extra configurations on github repository settings in order to block merge when the action fails
+# see settings / rules
+
+jobs:
+  web_tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Enable Flutter web
+        run: flutter config --enable-web
+
+      - name: Restore pub cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run integration tests on Chrome
+        run: flutter drive --target=integration_test/app_test.dart -d chrome
