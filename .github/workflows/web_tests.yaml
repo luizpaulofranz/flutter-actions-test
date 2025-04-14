@@ -2,10 +2,8 @@ name: Web Integration Tests
 
 on:
   pull_request:
-    types: [ opened, synchronize, reopened ]
-    branches: [ main ]
-# we have some extra configurations on github repository settings in order to block merge when the action fails
-# see settings / rules
+    types: [opened, synchronize, reopened]
+    branches: [main]
 
 jobs:
   web_tests:
@@ -19,11 +17,12 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Set up ChromeDriver
+      - name: Install Chrome and ChromeDriver
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-chromedriver
-          echo "$(which chromedriver)" >> $GITHUB_PATH
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+          sudo ln -s /usr/bin/chromium-browser /usr/bin/google-chrome
+          echo "CHROME_EXECUTABLE=/usr/bin/chromium-browser" >> $GITHUB_ENV
 
       - name: Enable Flutter web
         run: flutter config --enable-web
@@ -38,20 +37,16 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-
       - name: Run integration tests
         run: |
-          # Start ChromeDriver in the background
+          # Start ChromeDriver
           chromedriver --port=4444 &
           # Wait for ChromeDriver to initialize
           sleep 5
-          # Run tests
+          # Run tests with verbose logging
           flutter drive \
             --driver=test_driver/driver.dart \
             --target=integration_test/app_test.dart \
             -d web-server \
-            --release
-
-      # - name: Run integration tests on Chrome
-        # run: flutter test -d chrome --platform chrome integration_test/app_test.dart
-        # run: flutter drive --driver=test_driver/driver.dart --target=integration_test/app_test.dart -d web-server
+            --release \
+            --verbose
