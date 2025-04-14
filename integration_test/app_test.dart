@@ -14,7 +14,7 @@ void main() {
         'verify login screen with correct username and password',
         (tester) async {
           app.main();
-          await tester.pumpAndSettle();
+          await tester.pumpAndSettle(const Duration(seconds: 5));
           await Future.delayed(const Duration(seconds: 2));
           await tester.enterText(find.byType(TextFormField).at(0), 'username');
           await Future.delayed(const Duration(seconds: 2));
@@ -33,7 +33,7 @@ void main() {
         'verify login screen with incorrect username and password',
         (tester) async {
           app.main();
-          await tester.pumpAndSettle();
+          await tester.pumpAndSettle(const Duration(seconds: 5));
           await Future.delayed(const Duration(seconds: 2));
           await tester.enterText(find.byType(TextFormField).at(0), 'wronguser');
           await Future.delayed(const Duration(seconds: 2));
@@ -53,7 +53,7 @@ void main() {
         'FAILING TEST - to see the output',
         (tester) async {
           app.main();
-          await tester.pumpAndSettle();
+          await tester.pumpAndSettle(const Duration(seconds: 5));
           await Future.delayed(const Duration(seconds: 2));
           await tester.enterText(find.byType(TextFormField).at(0), 'wronguser');
           await Future.delayed(const Duration(seconds: 2));
