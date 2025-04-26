@@ -42,8 +42,8 @@ jobs:
       - name: Accept Android licenses
         run: yes | flutter doctor --android-licenses
 
-      - name: Kill all adb servers
-        run: adb kill-server || true
+      # - name: Kill all adb servers
+      #   run: adb kill-server || true
 
       - name: Run Android integration tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -55,12 +55,12 @@ jobs:
           force-avd-creation: true
           # emulator-options: '-no-window -no-audio -no-snapshot'
           disable-animations: true
-          # script: |
-          #   ./gradlew connectedCheck
-          #   flutter test integration_test/app_test.dart
+          script: |
+            ./gradlew connectedCheck
+            flutter test integration_test/app_test.dart
 
-      - name: Run integration tests
-        run: flutter test integration_test/app_test.dart
+      # - name: Run integration tests
+      #   run: flutter test integration_test/app_test.dart
 
       # Optional: Upload test results if needed
       # - name: Upload test report
