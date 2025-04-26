@@ -55,10 +55,10 @@ jobs:
           force-avd-creation: true
           # emulator-options: '-no-window -no-audio -no-snapshot'
           disable-animations: true
-          script: flutter test integration_test/app_test.dart
+          # script: flutter test integration_test/app_test.dart
 
-      # - name: Run integration tests
-      #   run: flutter test integration_test/app_test.dart
+      - name: Run integration tests
+        run: flutter test integration_test/app_test.dart
 
       # Optional: Upload test results if needed
       # - name: Upload test report
