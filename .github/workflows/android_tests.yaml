@@ -9,7 +9,8 @@ on:
 
 jobs:
   android_test:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+    # runs-on: macos-latest
 
     steps:
       - name: Checkout code
