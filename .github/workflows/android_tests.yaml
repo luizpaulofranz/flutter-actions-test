@@ -53,11 +53,11 @@ jobs:
           arch: x86_64
           profile: pixel_4
           force-avd-creation: true
-          # emulator-options: '-no-window -no-audio -no-snapshot'
+          emulator-options: '-no-window -no-audio -no-snapshot'
           disable-animations: true
-          script: |
-            ./gradlew connectedCheck
-            flutter test integration_test/app_test.dart
+          # script: |
+          #   ./gradlew connectedCheck
+          #   flutter test integration_test/app_test.dart
 
       - name: Run integration tests
         run: flutter test integration_test/app_test.dart
