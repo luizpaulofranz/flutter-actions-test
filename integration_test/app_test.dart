@@ -7,72 +7,67 @@ import 'package:integration_test/integration_test.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Helper function to wait for elements
-  Future<void> waitFor(Finder finder, WidgetTester tester) async {
-    final stopwatch = Stopwatch()..start();
-    while (stopwatch.elapsed < const Duration(seconds: 10)) {
-      await tester.pump(const Duration(milliseconds: 200));
-      if (finder.evaluate().isNotEmpty) return;
-    }
-    throw Exception('Element not found: $finder');
-  }
-
-  group('end to end test', () {
-    testWidgets('verify login screen with correct username and password',
+  group(
+    'end to end test',
+    () {
+      testWidgets(
+        'verify login screen with correct username and password',
         (tester) async {
-      await tester.runAsync(() async {
-        // Launch app
-        app.main();
-        await tester.pumpAndSettle(const Duration(seconds: 5));
+          app.main();
+          await tester.pumpAndSettle(const Duration(seconds: 5));
+          await Future.delayed(const Duration(seconds: 2));
+          await tester.enterText(find.byType(TextFormField).at(0), 'username');
+          await Future.delayed(const Duration(seconds: 2));
+          await tester.enterText(find.byType(TextFormField).at(1), 'password');
+          await Future.delayed(const Duration(seconds: 2));
+          await tester.tap(find.byType(ElevatedButton));
+          await Future.delayed(const Duration(seconds: 2));
+          await tester.pumpAndSettle();
 
-        // Verify initial state
-        await waitFor(find.text('Login'), tester);
+          await Future.delayed(const Duration(seconds: 2));
+          expect(find.byType(HomeScreen), findsOneWidget);
+        },
+      );
 
-        // Enter credentials - using keys instead of byType
-        final usernameField = find.byKey(const Key('username-field'));
-        final passwordField = find.byKey(const Key('password-field'));
-        final loginButton = find.byKey(const Key('login-button'));
-
-        await tester.enterText(usernameField, 'username');
-        await tester.testTextInput.receiveAction(TextInputAction.next);
-        await tester.pump();
-
-        await tester.enterText(passwordField, 'password');
-        await tester.testTextInput.receiveAction(TextInputAction.done);
-        await tester.pump();
-
-        // Submit form
-        await tester.tap(loginButton);
-        await tester.pumpAndSettle(const Duration(seconds: 5));
-
-        // Verify navigation
-        await waitFor(find.byType(HomeScreen), tester);
-      });
-    });
-
-    testWidgets('verify login screen with incorrect username and password',
+      testWidgets(
+        'verify login screen with incorrect username and password',
         (tester) async {
-      await tester.runAsync(() async {
-        app.main();
-        await tester.pumpAndSettle(const Duration(seconds: 5));
+          app.main();
+          await tester.pumpAndSettle(const Duration(seconds: 5));
+          await Future.delayed(const Duration(seconds: 2));
+          await tester.enterText(find.byType(TextFormField).at(0), 'wronguser');
+          await Future.delayed(const Duration(seconds: 2));
+          await tester.enterText(
+              find.byType(TextFormField).at(1), 'invalidpass');
+          await Future.delayed(const Duration(seconds: 2));
+          await tester.tap(find.byType(ElevatedButton));
+          await Future.delayed(const Duration(seconds: 2));
+          await tester.pumpAndSettle();
 
-        final usernameField = find.byKey(const Key('username-field'));
-        final passwordField = find.byKey(const Key('password-field'));
-        final loginButton = find.byKey(const Key('login-button'));
+          await Future.delayed(const Duration(seconds: 2));
+          expect(find.text('Invalid username or password'), findsOneWidget);
+        },
+      );
 
-        await tester.enterText(usernameField, 'wronguser');
-        await tester.testTextInput.receiveAction(TextInputAction.next);
-        await tester.pump();
+      // testWidgets(
+      //   'FAILING TEST - to see the output',
+      //   (tester) async {
+      //     app.main();
+      //     await tester.pumpAndSettle(const Duration(seconds: 5));
+      //     await Future.delayed(const Duration(seconds: 2));
+      //     await tester.enterText(find.byType(TextFormField).at(0), 'wronguser');
+      //     await Future.delayed(const Duration(seconds: 2));
+      //     await tester.enterText(
+      //         find.byType(TextFormField).at(1), 'invalidpass');
+      //     await Future.delayed(const Duration(seconds: 2));
+      //     await tester.tap(find.byType(ElevatedButton));
+      //     await Future.delayed(const Duration(seconds: 2));
+      //     await tester.pumpAndSettle();
 
-        await tester.enterText(passwordField, 'invalidpass');
-        await tester.testTextInput.receiveAction(TextInputAction.done);
-        await tester.pump();
-
-        await tester.tap(loginButton);
-        await tester.pumpAndSettle(const Duration(seconds: 5));
-
-        await waitFor(find.text('Invalid username or password'), tester);
-      });
-    });
-  });
+      //     await Future.delayed(const Duration(seconds: 2));
+      //     expect(find.byType(HomeScreen), findsOneWidget);
+      //   },
+      // );
+    },
+  );
 }

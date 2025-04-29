@@ -31,7 +31,7 @@ jobs:
           restore-keys: ${{ runner.os }}-pub-
 
       - run: flutter pub get
-      - run: flutter test integration_test/app_test.dart
+      - run: flutter test integration_test/app_test.dart --flavor=staging
 # You can use flavors to run test, e.g. flutter test integration_test --dart-define=envFlavor=dev --flavor dev
 # Alternatively, if you're using a custom script to run tests, you can use:
 # - run: ./path/to/your/script.sh
