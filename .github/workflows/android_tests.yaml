@@ -22,6 +22,12 @@ jobs:
       #     distribution: 'temurin'
       #     java-version: '17'
 
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true  # Caches Flutter SDK automatically
+
       - name: Set up JDK 19
         run: |
           cd /tmp
@@ -30,12 +36,6 @@ jobs:
           sudo mv jdk-19.0.1 /usr/lib/jvm
           flutter config --jdk-dir /usr/lib/jvm/jdk-19.0.1
           rm -rf ~/.gradle
-
-      - name: Install Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true  # Caches Flutter SDK automatically
           
 
       - name: Restore pub cache
