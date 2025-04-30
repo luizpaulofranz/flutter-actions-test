@@ -59,12 +59,14 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextFormField(
+              key: const Key('username-field'),
               controller: _usernameController,
               decoration: const InputDecoration(
                 labelText: 'Username',
               ),
             ),
             TextFormField(
+              key: const Key('password-field'),
               controller: _passwordController,
               obscureText: true,
               decoration: const InputDecoration(
@@ -73,6 +75,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
+              key: const Key('login-button'),
               onPressed: _login,
               child: const Text('Login'),
             ),
