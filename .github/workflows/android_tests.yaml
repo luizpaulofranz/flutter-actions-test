@@ -61,7 +61,7 @@ jobs:
       #     adb wait-for-device
       #     adb shell input keyevent 82
       #     echo "Emulator booted."
-      
+
       - name: Create AVD and start emulator
         run: |
           echo "no" | avdmanager create avd -n test -k "system-images;android-29;google_apis;x86_64" --device "pixel"
@@ -75,10 +75,10 @@ jobs:
           done
           echo "Emulator booted."
 
-    # Optional: disable animations
-    adb shell settings put global window_animation_scale 0
-    adb shell settings put global transition_animation_scale 0
-    adb shell settings put global animator_duration_scale 0
+          # Optional: disable animations
+          adb shell settings put global window_animation_scale 0
+          adb shell settings put global transition_animation_scale 0
+          adb shell settings put global animator_duration_scale 0
 
       - name: Disable animations
         run: |
