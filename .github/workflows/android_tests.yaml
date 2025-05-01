@@ -54,13 +54,31 @@ jobs:
       - name: Install system image
         run: sdkmanager "system-images;android-29;google_apis;x86_64"
 
+      # - name: Create AVD and start emulator
+      #   run: |
+      #     echo "no" | avdmanager create avd -n test -k "system-images;android-29;google_apis;x86_64" --device "pixel"
+      #     $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -no-boot-anim -gpu swiftshader_indirect -accel off &
+      #     adb wait-for-device
+      #     adb shell input keyevent 82
+      #     echo "Emulator booted."
+      
       - name: Create AVD and start emulator
         run: |
           echo "no" | avdmanager create avd -n test -k "system-images;android-29;google_apis;x86_64" --device "pixel"
-          $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -no-boot-anim -gpu swiftshader_indirect -accel off &
-          adb wait-for-device
-          adb shell input keyevent 82
+          $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -no-boot-anim -gpu swiftshader_indirect -accel off -no-snapshot &
+          EMU_BOOTED="false"
+          bootanim=""
+          until [[ "$bootanim" =~ "stopped" ]]; do
+            echo "Waiting for emulator to boot..."
+            bootanim=$(adb -e shell getprop init.svc.bootanim 2>&1)
+            sleep 5
+          done
           echo "Emulator booted."
+
+    # Optional: disable animations
+    adb shell settings put global window_animation_scale 0
+    adb shell settings put global transition_animation_scale 0
+    adb shell settings put global animator_duration_scale 0
 
       - name: Disable animations
         run: |
