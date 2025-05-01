@@ -51,28 +51,20 @@ jobs:
       - name: Accept Android licenses
         run: yes | flutter doctor --android-licenses
 
-      # - name: Kill all adb servers
-      #   run: adb kill-server || true
+      - name: Setup emulator
+        uses: android-actions/setup-android@v2
+      
+      - name: Create emulator
+        run: |
+          echo "no" | avdmanager create avd -n test -k "system-images;android-30;google_apis;x86_64" --device "pixel"
+          emulator -avd test -no-window -no-audio -no-boot-anim -accel off &
 
-      - name: Run Android integration tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          target: google_apis
-          arch: x86_64
-          profile: pixel_4
-          force-avd-creation: true
-          emulator-options: '-no-window -no-audio -no-snapshot'
-          disable-animations: true
-          script: flutter test integration_test/app_test.dart --timeout=3600s
+      - name: Wait for emulator
+        run: |
+          adb wait-for-device
+          adb shell input keyevent 82
 
-      # - name: Run integration tests
-      #   run: flutter test integration_test/app_test.dart
-
-      # Optional: Upload test results if needed
-      # - name: Upload test report
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: integration-test-report
-      #     path: build/integration_test/
+      - name: Run integration tests
+        run: flutter test integration_test/app_test.dart
+            
 
