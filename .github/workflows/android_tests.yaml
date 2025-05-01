@@ -10,7 +10,6 @@ on:
 jobs:
   android_test:
     runs-on: ubuntu-latest
-    # runs-on: macos-latest
 
     steps:
       - name: Checkout code
@@ -25,18 +24,8 @@ jobs:
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
-          cache: true  # Caches Flutter SDK automatically
-
-      # - name: Set up JDK 19
-      #   run: |
-      #     cd /tmp
-      #     curl -O https://download.java.net/java/GA/jdk19.0.1/afdd2e245b014143b62ccb916125e3ce/10/GPL/openjdk-19.0.1_linux-x64_bin.tar.gz
-      #     tar -xzvf openjdk-19.0.1_linux-x64_bin.tar.gz
-      #     sudo mv jdk-19.0.1 /usr/lib/jvm
-      #     flutter config --jdk-dir /usr/lib/jvm/jdk-19.0.1
-      #     rm -rf ~/.gradle
-          
+          channel: stable
+          cache: true
 
       - name: Restore pub cache
         uses: actions/cache@v3
@@ -45,26 +34,40 @@ jobs:
           key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: ${{ runner.os }}-pub-
 
-      - name: Install dependencies
+      - name: Install Flutter dependencies
         run: flutter pub get
 
       - name: Accept Android licenses
         run: yes | flutter doctor --android-licenses
 
-      - name: Setup emulator
+      - name: Set up Android SDK
         uses: android-actions/setup-android@v2
-      
-      - name: Create emulator
-        run: |
-          echo "no" | avdmanager create avd -n test -k "system-images;android-30;google_apis;x86_64" --device "pixel"
-          emulator -avd test -no-window -no-audio -no-boot-anim -accel off &
+        with:
+          cmdline-tools-version: 9477386
+          packages: |
+            system-images;android-29;google_apis;x86_64
+            platforms;android-29
+            platform-tools
+            emulator
+            build-tools;33.0.2
 
-      - name: Wait for emulator
+      - name: Create AVD and start emulator
         run: |
+          echo "no" | avdmanager create avd -n test -k "system-images;android-29;google_apis;x86_64" --device "pixel"
+          $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -no-boot-anim -gpu swiftshader_indirect -accel off &
           adb wait-for-device
           adb shell input keyevent 82
+          echo "Emulator booted."
 
-      - name: Run integration tests
-        run: flutter test integration_test/app_test.dart
-            
+      - name: Disable animations
+        run: |
+          adb shell settings put global window_animation_scale 0
+          adb shell settings put global transition_animation_scale 0
+          adb shell settings put global animator_duration_scale 0
 
+      - name: Run integration test
+        run: flutter test integration_test/app_test.dart --timeout=3600s
+
+      - name: Kill emulator
+        if: always()
+        run: adb emu kill
